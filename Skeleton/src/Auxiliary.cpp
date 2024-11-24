@@ -11,7 +11,6 @@ std::vector<std::string> Auxiliary::parseArguments(const std::string& line) {
     std::vector<std::string> arguments;
     std::istringstream stream(line);
     std::string argument;
-    // libi is the queen
 
     while (stream >> argument) {
         arguments.push_back(argument);
