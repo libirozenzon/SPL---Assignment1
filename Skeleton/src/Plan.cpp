@@ -98,12 +98,13 @@ Plan::Plan(const Plan& other)
       settlement(other.settlement),  // Settlement is assumed to be const & and doesn't require deep copy
       selectionPolicy(other.selectionPolicy ? other.selectionPolicy->clone() : nullptr),  // Clone the selection policy
       status(other.status),
+      facilities(),  // Explicitly initialize the facilities vector
+      underConstruction(),   // Initialize underConstruction here
       facilityOptions(other.facilityOptions),  // References are shared, assuming facilityOptions doesn't change
       life_quality_score(other.life_quality_score),
       economy_score(other.economy_score),
-      environment_score(other.environment_score),
-      facilities(),  // Explicitly initialize the facilities vector
-      underConstruction()   // Initialize underConstruction here
+      environment_score(other.environment_score)
+
     {
     
     // Deep copy facilities
