@@ -34,7 +34,7 @@ void Plan::step()
     // remember to delete whats necessary 
     int constLim= settlement.getConstructLimit();
     if(status== PlanStatus::AVALIABLE){
-        while (underConstruction.size() < constLim) {
+        while ((int) underConstruction.size() < constLim) {
             Facility* newFacility= new Facility (selectionPolicy->selectFacility(facilityOptions), settlement.getName());
             addFacility(newFacility);
         }
@@ -52,7 +52,7 @@ void Plan::step()
     }
 
     // change status if necessary
-    if(constLim==underConstruction.size()){
+    if(constLim== (int)underConstruction.size()){
         status= PlanStatus::BUSY;
     }
     else{
@@ -101,7 +101,10 @@ Plan::Plan(const Plan& other)
       facilityOptions(other.facilityOptions),  // References are shared, assuming facilityOptions doesn't change
       life_quality_score(other.life_quality_score),
       economy_score(other.economy_score),
-      environment_score(other.environment_score) {
+      environment_score(other.environment_score),
+      facilities(),  // Explicitly initialize the facilities vector
+      underConstruction()   // Initialize underConstruction here
+    {
     
     // Deep copy facilities
     for (Facility* facility : other.facilities) {
