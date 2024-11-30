@@ -3,6 +3,8 @@
 #include "Facility.h"
 #include "Settlement.h"
 #include "SelectionPolicy.h"
+#include <sstream> 
+#include <string> 
 using std::vector;
 
 enum class PlanStatus {
@@ -22,6 +24,9 @@ class Plan {
         const vector<Facility*> &getFacilities() const;
         void addFacility(Facility* facility);
         const string toString() const;
+        ~Plan();
+        Plan(const Plan& other);
+        Plan& operator=(const Plan &other) = delete;
 
     private:
         int plan_id;
