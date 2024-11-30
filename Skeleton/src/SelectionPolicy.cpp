@@ -76,14 +76,15 @@ const FacilityType & EconomySelection::selectFacility(const vector<FacilityType>
     // assumig there's a facilioty that its category is ECONOMY
     bool isEconomy= false;
     int size= facilitiesOptions.size();
-    int i=lastSelectedIndex+1;
-     for (i;!isEconomy; i= (i+ 1) % size){
+    int last;
+     for (int i=lastSelectedIndex+1;!isEconomy; i= (i+ 1) % size){
         if(facilitiesOptions[i].getCategory()== FacilityCategory::ECONOMY){
             isEconomy=true;
+            last=i;
         }
      }
-     lastSelectedIndex=i;
-     return facilitiesOptions[i];
+     lastSelectedIndex=last;
+     return facilitiesOptions[last];
 
 }
 
@@ -106,14 +107,15 @@ const FacilityType &SustainabilitySelection::selectFacility(const vector<Facilit
     // assumig there's a facilioty that its category is ENVIRONMENT
     bool isEnv= false;
     int size= facilitiesOptions.size();
-    int i=lastSelectedIndex+1;
-     for (i;!isEnv; i= (i+ 1) % size){
+    int last;
+     for (int i=lastSelectedIndex+1;!isEnv; i= (i+ 1) % size){
         if(facilitiesOptions[i].getCategory()== FacilityCategory::ENVIRONMENT){
             isEnv=true;
+            last=i;
         }
      }
-     lastSelectedIndex=i;
-     return facilitiesOptions[i];
+     lastSelectedIndex=last;
+     return facilitiesOptions[last];
 }
 
 const string SustainabilitySelection::toString() const
