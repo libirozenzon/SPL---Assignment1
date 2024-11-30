@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <sstream> 
 using std::string;
 using std::vector;
 
@@ -18,8 +19,9 @@ class Settlement {
         const string &getName() const;
         SettlementType getType() const;
         const string toString() const;
+        int getConstructLimit() const;
 
-        private:
+    private:
             const string name;
             SettlementType type;
 };
