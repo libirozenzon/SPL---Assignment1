@@ -16,27 +16,26 @@ SettlementType Settlement::getType() const
 }
 
 
-const string Settlement::toString() const
-{
-    // convert enum to string
-    std:: string strType= "";
-    switch (type)
-    {
-    case SettlementType::VILLAGE:
-        strType= "VILLAGE";
-    case SettlementType::CITY:
-       strType= "CITY";
-    case SettlementType::METROPOLIS:
-        strType= "METROPOLIS";
-    default:
-        strType= "Unknown";
-    }
-
-    return "Name: " + name + ", Type: " + strType;
+const string Settlement::toString() const {
+    return "Name: " + name + ", Type: " + typeToString(type);
 }
 
-int Settlement:: getConstructLimit() const{
-    return static_cast<int>(getType()) + 1;
+int Settlement::getConstructLimit() const {
+    return static_cast<int>(type) + 1;
+}
+
+// Function definition for converting enum to string
+string Settlement::typeToString(SettlementType type) {
+    switch (type) {
+    case SettlementType::VILLAGE:
+        return "VILLAGE";
+    case SettlementType::CITY:
+        return "CITY";
+    case SettlementType::METROPOLIS:
+        return "METROPOLIS";
+    default:
+        return "Unknown";
+    }
 }
 
 
