@@ -36,7 +36,7 @@ void Plan::step()
     if(status== PlanStatus::AVALIABLE){
         while ((int) underConstruction.size() < constLim) {
             Facility* newFacility= new Facility (selectionPolicy->selectFacility(facilityOptions), settlement.getName());
-            addFacility(newFacility);
+            underConstruction.push_back(newFacility);
         }
     }
     for (auto iter = underConstruction.begin(); iter != underConstruction.end(); ) {
@@ -45,7 +45,7 @@ void Plan::step()
 
     if (newStat == FacilityStatus::OPERATIONAL) {
         // If the facility is operational, move it to 'facilities' vector
-        facilities.push_back(facility);  // Add to 'facilities'
+        addFacility(facility); // Add to 'facilities'
         iter = underConstruction.erase(iter);  // Remove from 'underConstruction'
     } else {
         ++iter;  // Move to the next facility in the loop
@@ -69,10 +69,13 @@ const vector<Facility*>& Plan::getFacilities() const
  return facilities;
 }
 
+// add facility to facilities+ update values
 void Plan::addFacility(Facility *facility)
 {
-    //adding to underconstruction vector
-    underConstruction.push_back(facility);
+    facilities.push_back(facility);  
+    life_quality_score=life_quality_score+facility->getLifeQualityScore();
+    economy_score=economy_score+facility->getEconomyScore();
+    environment_score=environment_score+facility->getEnvironmentScore();
 }
 
 const string Plan::toString() const
