@@ -1,4 +1,5 @@
 #include "Simulation.h"
+#include <Action.h>
 
 
 Simulation::Simulation(const string &configFilePath) : isRunning(false), planCounter(0)
@@ -36,7 +37,7 @@ Simulation::Simulation(const string &configFilePath) : isRunning(false), planCou
         }
         else if (arguments[0] == "facility") {
             // Format: facility <facility_name> <category> <price> <lifeq_impact> <eco_impact> <env_impact>
-            if (arguments.size() != 6) {
+            if (arguments.size() != 7) {
                 std::cerr << "Error: Invalid facility line: " << line << std::endl;
                 continue;
             }
@@ -70,8 +71,10 @@ Simulation::Simulation(const string &configFilePath) : isRunning(false), planCou
             // Retrieve the settlement
             Settlement &settlement = getSettlement(settlementName);
 
-            // Create the selection policy (you'll need to implement the logic for this)
             SelectionPolicy* policy = readSelectionPolicy(selectionPolicy);  // You'll need to implement this function
+            if(policy==nullptr){
+                std::cerr << "Error: selectionPolicy  " << selectionPolicy << " does not exist." << std::endl;
+            }
 
             // Add the plan
             addPlan(settlement, policy);
@@ -85,75 +88,367 @@ Simulation::Simulation(const string &configFilePath) : isRunning(false), planCou
     file.close();
 }
 
-SelectionPolicy* readSelectionPolicy(const string& policyType) {
+SelectionPolicy* Simulation::readSelectionPolicy(const string& policyType) {
     if (policyType == "nve") {
-        // Create and return NaiveSelection policy
         return new NaiveSelection();
-    }
-    else if (policyType == "bal") {
-        return new BalancedSelection(0,0,0);
-    }
-    else if (policyType == "eco") {
-        // Create and return EconomySelection policy
+    } else if (policyType == "bal") {
+        return new BalancedSelection(0, 0, 0);
+    } else if (policyType == "eco") {
         return new EconomySelection();
-    }
-    else if (policyType == "env") {
-        // Create and return SustainabilitySelection policy
+    } else if (policyType == "env") {
         return new SustainabilitySelection();
-    }
-    else {
-        // If the policyType doesn't match, return nullptr or handle error
-        return nullptr; // Or throw an exception if appropriate
+    } else {
+        return nullptr; // Invalid policy type
     }
 }
 
+
 void Simulation::start()
 {
+    isRunning=true;
+    std :: cout << "The simulation has started\n";
+    while(isRunning){
+        string input;
+        std:: getline(std::cin,input);
+        if(input=="close"){
+            isRunning=false;
+            // should print everything
+            std:: cout<< "simulation is finished";
+        }
+        else{
+                vector<string> parsedAction= Auxiliary::parseArguments(input);
+                // adding translated actions
+
+        }
+
+    }
+}
+
+void Simulation:: TranslatingActions(const vector<string> &parsedAction){
+    // step
+    if(parsedAction[0]== "step"){
+        SimulateStep newStep= SimulateStep(std::stoi(parsedAction[1]));
+        newStep.act(*this);
+        BaseAction* saveToLog= newStep.clone();
+        actionsLog.push_back(saveToLog);
+    }
+
+    // plan
+    if(parsedAction[0]== "plan"){
+        AddPlan newPlan= AddPlan(parsedAction[1],parsedAction[2]);
+        // in act- make sure there are no errors and print "cannot create this plan"
+        newPlan.act(*this);
+        BaseAction* saveToLog= newPlan.clone();
+        actionsLog.push_back(saveToLog);
+
+    }
+
+    //settlement
+    if(parsedAction[0]=="settlement"){
+        SettlementType type;
+        int numOftype= std::stoi(parsedAction[2]);
+        if(numOftype==0){
+            type= SettlementType::VILLAGE;
+        }
+        else if(numOftype==1){
+            type= SettlementType::CITY;
+        }
+        else {
+            type= SettlementType:: METROPOLIS;
+        }
+        // what if not 0/1/2- not handling it
+
+        AddSettlement newSet= AddSettlement(parsedAction[1],type);
+        newSet.act(*this);
+        BaseAction* saveToLog= newSet.clone();
+        actionsLog.push_back(saveToLog);
+
+    }
+
+    // facility 
+    if(parsedAction[0]=="facility"){   
+         FacilityCategory type;
+        int numOftype= std::stoi(parsedAction[2]);
+        if(numOftype==0){
+            type= FacilityCategory::LIFE_QUALITY;
+        }
+        else if(numOftype==1){
+            type= FacilityCategory::ECONOMY;
+        }
+        else {
+            type= FacilityCategory::ENVIRONMENT;
+        }
+        // what if not 0/1/2- not handling it
+
+        AddFacility newFac= AddFacility(parsedAction[1],type,std::stoi(parsedAction[3]),std::stoi(parsedAction[4]),std::stoi(parsedAction[5]),std::stoi(parsedAction[6]));
+        newFac.act(*this);
+        BaseAction* saveToLog= newFac.clone();
+        actionsLog.push_back(saveToLog);
+
+    }
+
+    // print plan status
+    if(parsedAction[0]== "planStatus"){
+        PrintPlanStatus newPlanStat= PrintPlanStatus(std::stoi(parsedAction[1]));
+        newPlanStat.act(*this);
+        BaseAction* saveToLog= newPlanStat.clone();
+        actionsLog.push_back(saveToLog);
+
+    }
+
+    //change policy
+    if(parsedAction[0]== "changePolicy"){
+        ChangePlanPolicy newPlanPol= ChangePlanPolicy(std::stoi(parsedAction[1]), parsedAction[2]);
+        newPlanPol.act(*this);
+        BaseAction* saveToLog= newPlanPol.clone();
+        actionsLog.push_back(saveToLog);
+    }
+
+    // print actions log 
+    if(parsedAction[0]== "log"){
+        PrintActionsLog newActLog= PrintActionsLog();
+        newActLog.act(*this);
+        BaseAction* saveToLog= newActLog.clone();
+        actionsLog.push_back(saveToLog);
+    }
+
+    //backup
+    else if (parsedAction[0] == "backup")
+    {
+        BackupSimulation newBackup= BackupSimulation();
+        newBackup.act(*this);
+        BaseAction* saveToLog= newBackup.clone();
+        actionsLog.push_back(saveToLog);
+
+    }
+
+    // restore
+
+    else if(parsedAction[0]=="restore"){
+        RestoreSimulation newResSim= RestoreSimulation();
+        newResSim.act(*this);
+        BaseAction* saveToLog= newResSim.clone();
+        actionsLog.push_back(saveToLog);
+    }
+    
 }
 
 void Simulation::addPlan(const Settlement & settlement, SelectionPolicy * selectionPolicy)
 {
+
+    plans.push_back(Plan(planCounter,settlement,selectionPolicy, facilitiesOptions));
+    planCounter++;
 }
 
 void Simulation::addAction(BaseAction *action)
 {
+    actionsLog.push_back(action);
 }
 
 bool Simulation::addSettlement(Settlement *settlement)
 {
-    return false;
+    settlements.push_back(settlement);
 }
 
 bool Simulation::addFacility(FacilityType facility)
 {
-return false;
+    facilitiesOptions.push_back(facility);
 }
 
 bool Simulation::isSettlementExists(const string &settlementName)
 {
-    return false;
+    for(Settlement *currSet: settlements){
+        if((currSet->getName())==settlementName){
+            return true;
+        }
+
+    }
+        return false;
 }
+
+
+// need to do try+catch
 
 Settlement &Simulation::getSettlement(const string &settlementName)
 {
-    // TODO: insert return statement here
-}
+        for(Settlement *currSet: settlements){
+        if((currSet->getName())==settlementName){
+            return *currSet;
+        }
+        }
+       std::cerr << "Warning: Settlement not found.\n";
+       return *settlements[0];
+
+    }
+
+
+// need to do try and catch
 
 Plan &Simulation::getPlan(const int planID)
 {
-    // TODO: insert return statement here
+    if (planID > planCounter || planID<0){
+        throw std::runtime_error("Error: plan ID does not exist" );
+    }
+    else{
+        return plans[planID];
+    }
 }
 
 void Simulation::step()
 {
+    for(Plan& curr:plans){
+        curr.step();
+    }
 }
 
 void Simulation::close()
 {
+    for(Plan& curr:plans){
+        std :: cout << curr.toString();
+    }
+    isRunning=false;
 }
 
 void Simulation::open()
 {
+    isRunning=true;
 }
+
+Simulation::~Simulation() {
+    // Delete all settlements (pointers)
+    for (Settlement* settlement : settlements) {
+        delete settlement;
+    }
+    settlements.clear();
+
+    // Delete all actions (pointers)
+    for (BaseAction* action : actionsLog) {
+        delete action;
+    }
+    actionsLog.clear();
+
+    plans.clear();
+
+    // Facilities are not dynamically allocated, so no need to delete individual FacilityType objects.
+    facilitiesOptions.clear();
+}
+
+// copy constructor
+
+Simulation::Simulation(const Simulation& other) 
+    : isRunning(other.isRunning), planCounter(other.planCounter) {
+    // Deep copy of settlements
+    for (const Settlement* settlement : other.settlements) {
+        settlements.push_back(new Settlement(*settlement));
+    }
+
+    // // Deep copy of actions
+    // for (const BaseAction* action : other.actionsLog) {
+    //     actionsLog.push_back(action->clone());  // Assuming BaseAction has a virtual clone method
+    // }
+
+    // Deep copy of plans
+    for (const Plan& plan : other.plans) {
+        plans.push_back(plan);  
+    }
+
+    for (const FacilityType& facility : other.facilitiesOptions) {
+    facilitiesOptions.push_back(facility); // Uses copy constructor
+    }
+
+
+}
+
+//assignment operator
+
+Simulation& Simulation::operator=(const Simulation& other) {
+    if (this == &other) {
+        return *this;  // Self-assignment protection
+    }
+
+    // Clean up current resources
+    for (Settlement* settlement : settlements) {
+        delete settlement;
+    }
+    settlements.clear();
+
+    for (BaseAction* action : actionsLog) {
+        delete action;
+    }
+    actionsLog.clear();
+
+    plans.clear();
+
+    // Deep copy from other
+    isRunning = other.isRunning;
+    planCounter = other.planCounter;
+
+    for (const Settlement* settlement : other.settlements) {
+        settlements.push_back(new Settlement(*settlement));
+    }
+
+    // for (const BaseAction* action : other.actionsLog) {
+    //     actionsLog.push_back(action->clone());
+    // }
+
+    for (const Plan& plan : other.plans) {
+        plans.push_back(plan);
+    }
+
+    for (const FacilityType& facility : other.facilitiesOptions) {
+     facilitiesOptions.push_back(facility); // Uses copy constructor
+    }
+
+    return *this;
+}
+
+// move constructor
+
+Simulation::Simulation(Simulation&& other)
+    : isRunning(other.isRunning), 
+      planCounter(other.planCounter), 
+      settlements(std::move(other.settlements)),
+      actionsLog(std::move(other.actionsLog)),
+      plans(std::move(other.plans)),
+      facilitiesOptions(std::move(other.facilitiesOptions)) {
+    other.isRunning = false;
+    other.planCounter = 0;
+}
+
+// move assignment operator
+
+Simulation& Simulation::operator=(Simulation&& other)  {
+    if (this == &other) {
+        return *this;  // Self-assignment protection
+    }
+
+    // Clean up current resources
+    for (Settlement* settlement : settlements) {
+        delete settlement;
+    }
+    settlements.clear();
+
+    for (BaseAction* action : actionsLog) {
+        delete action;
+    }
+    actionsLog.clear();
+
+    plans.clear();
+
+    // Move resources from other
+    isRunning = other.isRunning;
+    planCounter = other.planCounter;
+
+    settlements = std::move(other.settlements);
+    actionsLog = std::move(other.actionsLog);
+    plans = std::move(other.plans);
+    facilitiesOptions = std::move(other.facilitiesOptions);
+
+    other.isRunning = false;
+    other.planCounter = 0;
+
+    return *this;
+}
+
 
 

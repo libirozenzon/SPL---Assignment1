@@ -20,6 +20,9 @@ const int Plan::getEnvironmentScore() const
 {
     return environment_score;
 }
+int Plan:: getPlanID(){
+    return plan_id;
+}
 
 void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
 {
@@ -83,13 +86,9 @@ const string Plan::toString() const
     std:: stringstream ss;
     ss << "Plan ID: " << plan_id << "\n";
     ss << "Settlement Name: " << settlement.getName() << "\n";
-    ss << "Settlement Type: " << Settlement::typeToString(settlement.getType()) << "\n"; // Use Settlement::typeToString
-    ss << "Status: " << (status == PlanStatus::AVALIABLE ? "AVAILABLE" : "BUSY") << "\n";
     ss << "Life Quality Score: " << life_quality_score << "\n";
     ss << "Economy Score: " << economy_score << "\n";
     ss << "Environment Score: " << environment_score << "\n";
-    ss << "Facilities: " << facilities.size() << " operational\n";
-    ss << "Under Construction: " << underConstruction.size() << " facilities\n";
 
     return ss.str();
 }

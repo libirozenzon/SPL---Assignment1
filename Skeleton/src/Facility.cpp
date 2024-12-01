@@ -11,6 +11,7 @@ environment_score(environment_score)
 {
 }
 
+
 const string &FacilityType::getName() const
 {
     return name;
@@ -28,12 +29,12 @@ int FacilityType::getLifeQualityScore() const
 
 int FacilityType::getEnvironmentScore() const
 {
-    return economy_score;
+    return environment_score;
 }
 
 int FacilityType::getEconomyScore() const
 {
-return environment_score;
+    return economy_score;
 }
 
 FacilityCategory FacilityType::getCategory() const
@@ -51,6 +52,12 @@ Facility::Facility(const FacilityType &type, const string &settlementName)
 : FacilityType(type), settlementName(settlementName),  status(FacilityStatus::UNDER_CONSTRUCTIONS), timeLeft(type.getCost())
 {
 }
+
+Facility *Facility:: clone() const
+{
+    return new Facility(*this);
+}
+
 
 const string & Facility::getSettlementName() const
 {

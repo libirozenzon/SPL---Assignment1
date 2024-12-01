@@ -1,17 +1,32 @@
 # Please implement your Makefile rules and targets below.
 # Customize this file to define how to build your project.
+all: clean compile link run
 
-all: link
+# Linking step
+link:
+	g++ -o bin/simulation bin/main.o bin/Action.o bin/Auxiliary.o bin/Facility.o bin/Plan.o bin/SelectionPolicy.o bin/Settlement.o bin/Simulation.o
 
-link: compile
-	@echo "linking"
-	g++ -o bin/main bin/main.o bin/Auxiliary.o
+# Compilation step
+compile:
+	g++ -g -Wall -Weffc++ -std=c++11 -Iinclude -c -o bin/main.o src/main.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -Iinclude -c -o bin/Action.o src/Action.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -Iinclude -c -o bin/Auxiliary.o src/Auxiliary.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -Iinclude -c -o bin/Facility.o src/Facility.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -Iinclude -c -o bin/Plan.o src/Plan.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -Iinclude -c -o bin/SelectionPolicy.o src/SelectionPolicy.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -Iinclude -c -o bin/Settlement.o src/Settlement.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -Iinclude -c -o bin/Simulation.o src/Simulation.cpp
 
-compile: src/main.cpp src/Auxiliary.cpp
-	@echo: "compiling files"
-	g++ -g -c -Wall -Weffc++ -std=c++11 -Iinclude -o bin/main.o src/main.cpp
-	g++ -g -c -Wall -Weffc++ -std=c++11 -Iinclude -o bin/Auxiliary.o src/Auxiliary.cpp
-
+# Cleaning step
 clean:
-	@echo: "cleaning bin directory"
-	rm -f bin/* 
+	rm -f bin/*
+
+# Run the compiled program
+run:
+	./bin/simulation
+
+# Run the program with Valgrind
+valgrind: all
+# Run the program with Valgrind
+valgrind: all
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./bin/simulation config_file.txt

@@ -17,8 +17,9 @@ class SelectionPolicy;
 class Simulation {
     public:
         Simulation(const string &configFilePath);
-        SelectionPolicy* readSelectionPolicy(string policy);
+        SelectionPolicy* readSelectionPolicy(const string&  policy);
         void start();
+        void TranslatingActions(const vector<string> &parsedAction);
         void addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy);
         void addAction(BaseAction *action);
         bool addSettlement(Settlement *settlement);
@@ -29,6 +30,17 @@ class Simulation {
         void step();
         void close();
         void open();
+        // Destructor
+        ~Simulation();
+        // Copy Constructor
+        Simulation(const Simulation &other);
+        // Copy Assignment Operator
+        Simulation& operator=(const Simulation &other);
+        // Move Constructor
+        Simulation(Simulation &&other) ;
+        // Move Assignment Operator
+        Simulation& operator=(Simulation &&other) ;
+
 
     private:
         bool isRunning;
