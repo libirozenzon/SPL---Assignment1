@@ -310,7 +310,6 @@ Settlement &Simulation::getSettlement(const string &settlementName)
     }
 
 
-// need to do try and catch
 
 Plan &Simulation::getPlan(const int planID)
 {
