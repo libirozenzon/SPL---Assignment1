@@ -314,12 +314,7 @@ Settlement &Simulation::getSettlement(const string &settlementName)
 
 Plan &Simulation::getPlan(const int planID)
 {
-    if (planID > planCounter || planID<0){
-        throw std::runtime_error("Error: plan ID does not exist" );
-    }
-    else{
         return plans[planID];
-    }
 }
 
 void Simulation::step()
@@ -327,6 +322,11 @@ void Simulation::step()
     for(Plan& curr:plans){
         curr.step();
     }
+}
+
+const int Simulation::getPlanCounter() const
+{
+    return planCounter;
 }
 
 void Simulation::close()

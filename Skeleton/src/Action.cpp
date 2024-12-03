@@ -172,6 +172,7 @@ void PrintPlanStatus::act(Simulation &simulation)
 }
 else {
     simulation.getPlan(planId).printStatus();
+    complete();
 }
 }
 
