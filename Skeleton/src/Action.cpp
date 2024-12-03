@@ -192,12 +192,56 @@ ChangePlanPolicy::ChangePlanPolicy(const int planId, const string &newPolicy): B
 
 void ChangePlanPolicy::act(Simulation &simulation)
 {
+    //check if working also with the special policy 
+    // check if planID exists
+    if(!simulation.isPlanExist(planId)){
+        error("cannot change selection policy");
+    }
+    else{
+        Plan & currPlan= simulation.getPlan(planId);
+        std::string policy= currPlan.getSelectionPolicy();
+        if(policy==newPolicy){
+            error("cannot change selection policy");
+        }
+        else if(newPolicy=="bal"){
+            // taking care of the underconstruction vector
+            int LifeQualityScore=0;
+            int EconomyScore=0;
+            int EnvironmentScore=0;
+            for (const Facility* facility : currPlan.getUnderConstruction()) {
+                LifeQualityScore+=facility->getLifeQualityScore();
+                EconomyScore+=facility->getEconomyScore();
+                EnvironmentScore+=facility->getEnvironmentScore();
+            }
+            for (const Facility* facility2 : currPlan.getFacilities()) {
+                LifeQualityScore+=facility2->getLifeQualityScore();
+                EconomyScore+=facility2->getEconomyScore();
+                EnvironmentScore+=facility2->getEnvironmentScore();
+            }
+            SelectionPolicy* currPolicy= new BalancedSelection(LifeQualityScore,EconomyScore,EnvironmentScore);
+            currPlan.setSelectionPolicy(currPolicy);
+            complete();
+        }
     
+        else{
+            SelectionPolicy* currPolicy= simulation.readSelectionPolicy(newPolicy); //deal with ptr later
+            if(currPolicy==nullptr){
+                error("cannot change selection policy");
+            }
+
+            else{
+
+                currPlan.setSelectionPolicy(currPolicy);
+                complete();
+            }
+        }
+    }
 }
+
 
 ChangePlanPolicy * ChangePlanPolicy::clone() const
 {
-return nullptr;
+return new ChangePlanPolicy(*this);
 }
 
 const string ChangePlanPolicy::toString() const

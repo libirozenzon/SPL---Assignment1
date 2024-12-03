@@ -33,6 +33,10 @@ void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
     this->selectionPolicy=selectionPolicy; 
 }
 
+string Plan:: getSelectionPolicy(){
+    return selectionPolicy->toString();
+}
+
 void Plan::step()
 {
     // remember to delete whats necessary 

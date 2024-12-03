@@ -17,7 +17,7 @@ class SelectionPolicy;
 class Simulation {
     public:
         Simulation(const string &configFilePath);
-        SelectionPolicy* readSelectionPolicy(const string&  policy);
+        SelectionPolicy* readSelectionPolicy(const string&  policyType);
         void start();
         void TranslatingActions(const vector<string> &parsedAction);
         void addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy);
@@ -25,6 +25,8 @@ class Simulation {
         bool addSettlement(Settlement *settlement);
         bool addFacility(FacilityType facility);
         bool isSettlementExists(const string &settlementName);
+        bool isFacilityExists(const string &FacilityName);
+        bool isPlanExist(const int planID);
         Settlement &getSettlement(const string &settlementName);
         Plan &getPlan(const int planID);
         const int getPlanCounter() const; //added function

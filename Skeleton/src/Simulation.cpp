@@ -294,6 +294,16 @@ bool Simulation:: isFacilityExists(const string &FacilityName){
 
 }
 
+bool Simulation:: isPlanExist(const int planID){
+    for(Plan &curr: plans){
+        const int id= curr.getPlanID();
+        if(id==planID){
+            return true;
+        }
+    }
+    return false;
+}
+
 
 // need to do try+catch
 
