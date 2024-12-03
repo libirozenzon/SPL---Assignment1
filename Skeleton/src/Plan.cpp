@@ -100,6 +100,11 @@ const vector<Facility*>& Plan::getFacilities() const
  return facilities;
 }
 
+const vector<Facility*>& Plan::getUnderConstuction() const
+{
+  return underConstruction;
+}
+
 // add facility to facilities+ update values
 void Plan::addFacility(Facility *facility)
 {

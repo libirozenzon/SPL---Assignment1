@@ -218,7 +218,7 @@ void ChangePlanPolicy::act(Simulation &simulation)
             int LifeQualityScore=0;
             int EconomyScore=0;
             int EnvironmentScore=0;
-            for (const Facility* facility : currPlan.getUnderConstruction()) {
+            for (const Facility* facility : currPlan.getUnderConstuction()) {
                 LifeQualityScore+=facility->getLifeQualityScore();
                 EconomyScore+=facility->getEconomyScore();
                 EnvironmentScore+=facility->getEnvironmentScore();
