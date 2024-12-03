@@ -111,15 +111,15 @@ string facilityCategoryToString(FacilityCategory category) {
 
 const string Facility::toString() const
 {
-    return "Facility Name: " + getName() + "\n" +  // Name from FacilityType
-           "Settlement: " + getSettlementName() + "\n" +  // Settlement name
-           "Category: " + facilityCategoryToString(category) + "\n" +  // Facility category
-           "Price: " + std::to_string(getCost()) + "\n" +  // Price
-           "Life Quality Score: " + std::to_string(getLifeQualityScore()) + "\n" +
-           "Economy Score: " + std::to_string(getEconomyScore()) + "\n" +
-           "Environment Score: " + std::to_string(getEnvironmentScore()) + "\n" +
-           "Status: " +  facilityStatusToString(status) + "\n" +  // Facility status
-           "Time Left: " + std::to_string(getTimeLeft());
+    std:: stringstream ss;
+    ss << "Facility Name: " + getName() << "\n";
+    if (status==FacilityStatus::OPERATIONAL) {
+      ss << "Facility status: OPERATIONAL";
+    }
+    else {
+        ss << "Facility status: UNDER CONSTRUCTION";
+    }
+    return ss.str();
 }
 
 

@@ -1,5 +1,9 @@
 #include "Action.h"
 
+BaseAction::BaseAction(): status(ActionStatus::ERROR), errorMsg("")
+{
+}
+
 ActionStatus BaseAction::getStatus() const
 {
     return status;
@@ -13,6 +17,7 @@ void BaseAction::complete()
 void BaseAction::error(string errorMsg)
 {
     status= ActionStatus::ERROR;
+    this->errorMsg=std::move(errorMsg);
     std:: cout<< "an error occured"+ errorMsg; // should i write it like this?
 }
 
@@ -129,17 +134,25 @@ const string AddSettlement::toString() const
 }
 
 // you can start here Rotem
-AddFacility::AddFacility(const string & facilityName, const FacilityCategory facilityCategory, const int price, const int lifeQualityScore, const int economyScore, const int environmentScore)
+AddFacility::AddFacility(const string & facilityName, const FacilityCategory facilityCategory, const int price, const int lifeQualityScore, const int economyScore, const int environmentScore):
+facilityName(facilityName), facilityCategory(facilityCategory), price(price), lifeQualityScore(lifeQualityScore), economyScore(economyScore), environmentScore(environmentScore)
 {
 }
 
 void AddFacility::act(Simulation &simulation)
 {
+        FacilityType newFac = FacilityType(facilityName,facilityCategory,price,lifeQualityScore,economyScore,environmentScore);
+        if (simulation.addFacility(newFac)==true) {
+            complete();
+        }
+        else {
+            error("Facility already exists");
+        }
 }
 
 AddFacility *AddFacility::clone() const
 {
-    return nullptr;
+    return new AddFacility(*this);
 }
 
 const string AddFacility::toString() const
@@ -147,12 +160,17 @@ const string AddFacility::toString() const
     return string();
 }
 
-PrintPlanStatus::PrintPlanStatus(int planId)
+PrintPlanStatus::PrintPlanStatus(int planId): 
 {
 }
 
 void PrintPlanStatus::act(Simulation &simulation)
-{
+{ if (simulation.getPlanCounter()<=planId){
+    error("Plan does not exists");
+}
+else {
+    simulation.getPlan(planId).printStatus();
+}
 }
 
 PrintPlanStatus * PrintPlanStatus::clone() const

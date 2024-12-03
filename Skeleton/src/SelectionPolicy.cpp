@@ -19,7 +19,7 @@ const FacilityType &NaiveSelection::selectFacility(const vector<FacilityType> &f
 
 const string NaiveSelection::toString() const
 {
-    return " Naive Selection: Last selected index = " + std::to_string(lastSelectedIndex);
+    return "Naive Selection";
 }
 
 NaiveSelection *NaiveSelection::clone() const
@@ -59,10 +59,10 @@ const FacilityType &BalancedSelection::selectFacility(const vector<FacilityType>
 
 const string BalancedSelection::toString() const
 {
-return "BalancedSelection: Life Quality Score: " + std::to_string(LifeQualityScore) + ", Economy Score: " + std::to_string(EconomyScore) + ", Environment Score: " + std::to_string(EnvironmentScore);
+return "BalancedSelection";
 }
 
-BalancedSelection * BalancedSelection::clone() const
+BalancedSelection *BalancedSelection::clone() const
 {
  return new BalancedSelection(*this); // no need for copy constructor
 }
@@ -90,7 +90,7 @@ const FacilityType & EconomySelection::selectFacility(const vector<FacilityType>
 
 const string EconomySelection::toString() const
 {
-    return " Economy Selection: Last selected index = " + std::to_string(lastSelectedIndex);
+    return "Economy Selection";
 }
 
 EconomySelection *EconomySelection::clone() const
@@ -120,7 +120,7 @@ const FacilityType &SustainabilitySelection::selectFacility(const vector<Facilit
 
 const string SustainabilitySelection::toString() const
 {
-    return " Sustainability Selection: Last selected index = " + std::to_string(lastSelectedIndex);
+    return "Sustainability Selection";
 }
 
 SustainabilitySelection * SustainabilitySelection::clone() const
