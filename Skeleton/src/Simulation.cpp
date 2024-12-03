@@ -1,5 +1,6 @@
 #include "Simulation.h"
 #include <Action.h>
+extern Simulation* simulationBackup=nullptr;
 
 
 Simulation::Simulation(const string &configFilePath) : isRunning(false), planCounter(0)
@@ -86,6 +87,7 @@ Simulation::Simulation(const string &configFilePath) : isRunning(false), planCou
 
     // Close the file after reading
     file.close();
+
 }
 
 SelectionPolicy* Simulation::readSelectionPolicy(const string& policyType) {
@@ -111,8 +113,9 @@ void Simulation::start()
         string input;
         std:: getline(std::cin,input);
         if(input=="close"){
+            Close close = Close();
+            close.act(*this);
             isRunning=false;
-            // should print everything
             std:: cout<< "simulation is finished";
         }
         else{
@@ -305,6 +308,30 @@ const int Simulation::getPlanCounter() const
     return planCounter;
 }
 
+vector<BaseAction *> &Simulation::getActionLog()
+{
+    return actionsLog;
+}
+
+void Simulation::backup()
+{
+    if (simulationBackup!=nullptr) {
+        delete simulationBackup;
+    }
+    else {
+        simulationBackup = new Simulation(*this);
+    }
+}
+bool Simulation::restore()
+{
+    if (simulationBackup == nullptr)
+    {
+        return false;
+    }
+    *this = *simulationBackup;
+    return true;
+}
+
 void Simulation::close()
 {
     for(Plan& curr:plans){
@@ -392,9 +419,9 @@ Simulation& Simulation::operator=(const Simulation& other) {
         settlements.push_back(new Settlement(*settlement));
     }
 
-    // for (const BaseAction* action : other.actionsLog) {
-    //     actionsLog.push_back(action->clone());
-    // }
+    for (const BaseAction* action : other.actionsLog) {
+         actionsLog.push_back(action->clone());
+     }
 
     for (const Plan& plan : other.plans) {
         plans.push_back(plan);

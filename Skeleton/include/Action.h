@@ -22,6 +22,7 @@ class BaseAction{
         void complete();
         void error(string errorMsg);
         const string &getErrorMsg() const;
+        std::string actionStatus() const;
 
     private:
         string errorMsg;

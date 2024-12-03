@@ -28,6 +28,9 @@ class Simulation {
         Settlement &getSettlement(const string &settlementName);
         Plan &getPlan(const int planID);
         const int getPlanCounter() const; //added function
+        vector<BaseAction*>& getActionLog();
+        void backup();
+        bool restore();
         void step();
         void close();
         void open();
