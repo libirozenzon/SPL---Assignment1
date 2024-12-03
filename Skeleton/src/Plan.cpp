@@ -117,6 +117,7 @@ const string Plan::toString() const
     ss << "Life Quality Score: " << life_quality_score << "\n";
     ss << "Economy Score: " << economy_score << "\n";
     ss << "Environment Score: " << environment_score << "\n";
+    return ss.str();
 }
 
 
