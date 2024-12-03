@@ -18,7 +18,7 @@ void BaseAction::error(string errorMsg)
 {
     status= ActionStatus::ERROR;
     this->errorMsg=std::move(errorMsg);
-    std:: cout<< "an error occured"+ errorMsg; // should i write it like this?
+    std:: cout<< "an error occured:" << this->errorMsg << std::endl;
 }
 
 const string &BaseAction::getErrorMsg() const
@@ -28,10 +28,10 @@ const string &BaseAction::getErrorMsg() const
 
 std::string BaseAction::actionStatus() const {
     if (status==ActionStatus::COMPLETED) {
-        return "COMPLETED";
+        return " COMPLETED";
         }
     else {
-        return "ERROR";
+        return " ERROR";
     }
 }
 
@@ -49,7 +49,7 @@ void SimulateStep::act(Simulation & simulation)
 
 const string SimulateStep::toString() const
 {
-    return "step" + std::to_string(numOfSteps) + actionStatus()+"\n"; 
+    return "step " + std::to_string(numOfSteps) + actionStatus()+"\n"; 
 }
 
 SimulateStep *SimulateStep::clone() const
@@ -108,7 +108,7 @@ void AddPlan::act(Simulation &simulation)
 
 const string AddPlan::toString() const
 {
-    return "plan" + settlementName + selectionPolicy + actionStatus() + "\n";
+    return "plan " + settlementName + selectionPolicy + actionStatus() + "\n";
 }
 
 AddPlan *AddPlan::clone() const
@@ -141,7 +141,7 @@ AddSettlement *AddSettlement::clone() const
 
 const string AddSettlement::toString() const
 {
-    return "settlement" + settlementName + std::to_string(static_cast<int>(settlementType)) + actionStatus();
+    return "settlement " + settlementName + std::to_string(static_cast<int>(settlementType)) + actionStatus()+"\n";
 }
 
 AddFacility::AddFacility(const string & facilityName, const FacilityCategory facilityCategory, const int price, const int lifeQualityScore, const int economyScore, const int environmentScore):
@@ -167,7 +167,7 @@ AddFacility *AddFacility::clone() const
 
 const string AddFacility::toString() const
 {
-    return "facility" + facilityName + std::to_string(static_cast<int>(facilityCategory))
+    return "facility " + facilityName + std::to_string(static_cast<int>(facilityCategory))
      + std::to_string(price) + std::to_string(lifeQualityScore) + std::to_string(economyScore)
      + std::to_string(environmentScore) + actionStatus() + "\n";
 }
@@ -193,7 +193,7 @@ return new PrintPlanStatus(*this);
 
 const string PrintPlanStatus::toString() const
 {
-return "planStatus" + std::to_string(planId) + actionStatus() +"\n";
+return "planStatus " + std::to_string(planId) + actionStatus() +"\n";
 }
 
 ChangePlanPolicy::ChangePlanPolicy(const int planId, const string &newPolicy): BaseAction(),planId(planId), newPolicy(newPolicy)
@@ -256,7 +256,7 @@ return new ChangePlanPolicy(*this);
 
 const string ChangePlanPolicy::toString() const
 {
-    return "ChangePlanPolicy" + std::to_string(planId) + newPolicy + actionStatus() + "\n";
+    return "ChangePlanPolicy " + std::to_string(planId) + newPolicy + actionStatus() + "\n";
 }
 
 PrintActionsLog::PrintActionsLog() : BaseAction()
@@ -279,7 +279,7 @@ PrintActionsLog * PrintActionsLog::clone() const
 
 const string PrintActionsLog::toString() const
 {
-   return "PrintActionsLog" + actionStatus() + "\n";
+   return "PrintActionsLog " + actionStatus() + "\n";
 }
 
 Close::Close() : BaseAction()
@@ -304,7 +304,7 @@ return new Close(*this);
 
 const string Close::toString() const
 {
-    return "close" + actionStatus() + "\n";
+    return "close " + actionStatus() + "\n";
 }
 
 BackupSimulation::BackupSimulation() : BaseAction()
@@ -324,7 +324,7 @@ BackupSimulation *BackupSimulation::clone() const
 
 const string BackupSimulation::toString() const
 {
-    return "backup" + actionStatus() + "\n";
+    return "backup " + actionStatus() + "\n";
 }
 
 RestoreSimulation::RestoreSimulation(): BaseAction()
@@ -349,5 +349,5 @@ RestoreSimulation *RestoreSimulation::clone() const
 
 const string RestoreSimulation::toString() const
 {
-    return "restore" + actionStatus() + "\n";
+    return "restore " + actionStatus() + "\n";
 }

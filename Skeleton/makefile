@@ -1,5 +1,4 @@
-# Please implement your Makefile rules and targets below.
-# Customize this file to define how to build your project.
+# Build and Run Project
 all: clean compile link run
 
 # Linking step
@@ -23,10 +22,8 @@ clean:
 
 # Run the compiled program
 run:
-	./bin/simulation
+	./bin/simulation config_file.txt
 
 # Run the program with Valgrind
-valgrind: all
-# Run the program with Valgrind
-valgrind: all
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./bin/simulation config_file.txt
+valgrind: clean compile link
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./bin/simulation config_file.txt

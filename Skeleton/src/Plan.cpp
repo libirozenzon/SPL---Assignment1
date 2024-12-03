@@ -82,7 +82,7 @@ void Plan::printStatus() //with facilities
     else {
         ss << "Plan Status: BUSY" << "\n";
     }
-    ss << selectionPolicy->toString() << "\n";
+    ss << "Selection policy: " << selectionPolicy->toString() << "\n";
     ss << "Life Quality Score: " << life_quality_score << "\n";
     ss << "Economy Score: " << economy_score << "\n";
     ss << "Environment Score: " << environment_score << "\n";

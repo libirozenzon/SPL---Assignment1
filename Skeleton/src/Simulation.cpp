@@ -120,7 +120,7 @@ void Simulation::start()
         }
         else{
                 vector<string> parsedAction= Auxiliary::parseArguments(input);
-                // adding translated actions
+                TranslatingActions(parsedAction);
 
         }
 
