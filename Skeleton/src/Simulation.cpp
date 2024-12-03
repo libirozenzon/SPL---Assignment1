@@ -247,12 +247,29 @@ void Simulation::addAction(BaseAction *action)
 
 bool Simulation::addSettlement(Settlement *settlement)
 {
-    settlements.push_back(settlement);
+    // checking if settlement exists
+    const std::string& name= settlement->getName(); 
+    if(!isSettlementExists(name)){
+        settlements.push_back(settlement);
+        return false;
+    }
+    else{
+        return true;
+    }
+
 }
 
 bool Simulation::addFacility(FacilityType facility)
 {
+    const std::string& name= facility.getName(); 
+    if(!isFacilityExists(name)){
     facilitiesOptions.push_back(facility);
+        return true;
+    }
+    else{
+        return false;
+    }
+
 }
 
 bool Simulation::isSettlementExists(const string &settlementName)
@@ -264,6 +281,17 @@ bool Simulation::isSettlementExists(const string &settlementName)
 
     }
         return false;
+}
+
+bool Simulation:: isFacilityExists(const string &FacilityName){
+    for (const FacilityType& facility : facilitiesOptions) {
+    const std::string& name = facility.getName();
+    if (name == FacilityName) {
+        return true;
+    }
+    }
+    return false;
+
 }
 
 

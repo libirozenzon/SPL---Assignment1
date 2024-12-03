@@ -26,7 +26,7 @@ const string &BaseAction::getErrorMsg() const
     return errorMsg;
 }
 
-SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps)
+SimulateStep::SimulateStep(const int numOfSteps) : BaseAction(),numOfSteps(numOfSteps)
 {
 }
 
@@ -48,7 +48,7 @@ SimulateStep *SimulateStep::clone() const
     return new SimulateStep(*this);
 }
 
-AddPlan::AddPlan(const string & settlementName, const string & selectionPolicy) : settlementName(settlementName), selectionPolicy(selectionPolicy)
+AddPlan::AddPlan(const string & settlementName, const string & selectionPolicy) : BaseAction(),settlementName(settlementName), selectionPolicy(selectionPolicy)
 {
 
 
@@ -107,20 +107,22 @@ AddPlan *AddPlan::clone() const
     return new AddPlan(*this);
 }
 
-AddSettlement::AddSettlement(const string & settlementName, SettlementType settlementType) :settlementName(settlementName), settlementType(settlementType)
+AddSettlement::AddSettlement(const string & settlementName, SettlementType settlementType) :BaseAction(),settlementName(settlementName), settlementType(settlementType)
 {
 }
 
 void AddSettlement::act(Simulation & simulation)
 {
-    if(simulation.isSettlementExists(settlementName)){
-        error("settlemnt already exists");
-    }
-    else{
         Settlement* newSett= new Settlement(settlementName,settlementType); // need to delete
-        simulation.addSettlement(newSett);
-        complete();
-    }
+        bool isExist= simulation.addSettlement(newSett);
+        if(isExist){
+            error("settlemnt already exists");
+        }
+        else{
+            complete();
+        }
+
+    
 }
 
 AddSettlement *AddSettlement::clone() const
@@ -135,7 +137,7 @@ const string AddSettlement::toString() const
 
 // you can start here Rotem
 AddFacility::AddFacility(const string & facilityName, const FacilityCategory facilityCategory, const int price, const int lifeQualityScore, const int economyScore, const int environmentScore):
-facilityName(facilityName), facilityCategory(facilityCategory), price(price), lifeQualityScore(lifeQualityScore), economyScore(economyScore), environmentScore(environmentScore)
+BaseAction(),facilityName(facilityName), facilityCategory(facilityCategory), price(price), lifeQualityScore(lifeQualityScore), economyScore(economyScore), environmentScore(environmentScore)
 {
 }
 
@@ -160,7 +162,7 @@ const string AddFacility::toString() const
     return string();
 }
 
-PrintPlanStatus::PrintPlanStatus(int planId): 
+PrintPlanStatus::PrintPlanStatus(int planId): BaseAction(), planId(planId)
 {
 }
 
@@ -183,12 +185,13 @@ const string PrintPlanStatus::toString() const
 return string();
 }
 
-ChangePlanPolicy::ChangePlanPolicy(const int planId, const string &newPolicy)
+ChangePlanPolicy::ChangePlanPolicy(const int planId, const string &newPolicy): BaseAction(),planId(planId), newPolicy(newPolicy)
 {
 }
 
 void ChangePlanPolicy::act(Simulation &simulation)
 {
+    
 }
 
 ChangePlanPolicy * ChangePlanPolicy::clone() const
@@ -219,7 +222,7 @@ const string PrintActionsLog::toString() const
     return string();
 }
 
-Close::Close()
+Close::Close(): BaseAction()
 {
 }
 
@@ -237,7 +240,7 @@ const string Close::toString() const
     return string();
 }
 
-BackupSimulation::BackupSimulation()
+BackupSimulation::BackupSimulation(): BaseAction()
 {
 }
 
@@ -255,7 +258,7 @@ const string BackupSimulation::toString() const
     return string();
 }
 
-RestoreSimulation::RestoreSimulation()
+RestoreSimulation::RestoreSimulation(): BaseAction()
 {
 }
 
