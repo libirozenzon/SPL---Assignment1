@@ -54,21 +54,21 @@ void AddPlan::act(Simulation &simulation)
     SelectionPolicy* newPolicy= nullptr;
     // naive selection policy
     if(selectionPolicy=="nve"){
-        newPolicy= new NaiveSelection();
+        newPolicy= new NaiveSelection(); // need to delete
     }
     // balances selection policy
     else if(selectionPolicy=="bal"){
-        newPolicy= new BalancedSelection(0,0,0);
+        newPolicy= new BalancedSelection(0,0,0); // need to delete
     }
 
     // economy selection policy
     else if(selectionPolicy=="eco"){
-        newPolicy= new EconomySelection();
+        newPolicy= new EconomySelection(); // need to delete
     }
 
     // sustainability selection policy
     else if(selectionPolicy=="env"){
-        newPolicy= new SustainabilitySelection();
+        newPolicy= new SustainabilitySelection(); // need to delete
     }
     //error
     else{
@@ -112,18 +112,20 @@ void AddSettlement::act(Simulation & simulation)
         error("settlemnt already exists");
     }
     else{
-        Settlement* newSett= new Settlement(settlementName,settlementType);
+        Settlement* newSett= new Settlement(settlementName,settlementType); // need to delete
+        simulation.addSettlement(newSett);
+        complete();
     }
 }
 
 AddSettlement *AddSettlement::clone() const
 {
-    return nullptr;
+    return new AddSettlement(*this);
 }
 
 const string AddSettlement::toString() const
 {
-    return string();
+    return string(); //TODO
 }
 
 // you can start here Rotem
