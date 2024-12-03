@@ -1,9 +1,9 @@
 #include "Simulation.h"
 #include <Action.h>
-extern Simulation* simulationBackup=nullptr;
+extern Simulation* backup;
 
 
-Simulation::Simulation(const string &configFilePath) : isRunning(false), planCounter(0)
+Simulation::Simulation(const string &configFilePath) : isRunning(false), planCounter(0), actionsLog(), plans(), settlements(), facilitiesOptions()
 {
     // opening the config file
     std::ifstream file(configFilePath);
@@ -346,22 +346,22 @@ vector<BaseAction *> &Simulation::getActionLog()
     return actionsLog;
 }
 
-void Simulation::backup()
+void Simulation::Backup()
 {
-    if (simulationBackup!=nullptr) {
-        delete simulationBackup;
+    if (backup!=nullptr) {
+        delete backup;
     }
     else {
-        simulationBackup = new Simulation(*this);
+        backup = new Simulation(*this);
     }
 }
 bool Simulation::restore()
 {
-    if (simulationBackup == nullptr)
+    if (backup == nullptr)
     {
         return false;
     }
-    *this = *simulationBackup;
+    *this = *backup;
     return true;
 }
 
@@ -401,16 +401,16 @@ Simulation::~Simulation() {
 // copy constructor
 
 Simulation::Simulation(const Simulation& other) 
-    : isRunning(other.isRunning), planCounter(other.planCounter) {
+    : isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(), plans(), settlements(), facilitiesOptions() {
     // Deep copy of settlements
     for (const Settlement* settlement : other.settlements) {
         settlements.push_back(new Settlement(*settlement));
     }
 
-    // // Deep copy of actions
-    // for (const BaseAction* action : other.actionsLog) {
-    //     actionsLog.push_back(action->clone());  // Assuming BaseAction has a virtual clone method
-    // }
+    // Deep copy of actions
+    for (const BaseAction* action : other.actionsLog) {
+        actionsLog.push_back(action->clone());  // Assuming BaseAction has a virtual clone method
+    }
 
     // Deep copy of plans
     for (const Plan& plan : other.plans) {
@@ -472,9 +472,9 @@ Simulation& Simulation::operator=(const Simulation& other) {
 Simulation::Simulation(Simulation&& other)
     : isRunning(other.isRunning), 
       planCounter(other.planCounter), 
+    actionsLog(std::move(other.actionsLog)),
+    plans(std::move(other.plans)),
       settlements(std::move(other.settlements)),
-      actionsLog(std::move(other.actionsLog)),
-      plans(std::move(other.plans)),
       facilitiesOptions(std::move(other.facilitiesOptions)) {
     other.isRunning = false;
     other.planCounter = 0;

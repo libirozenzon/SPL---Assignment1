@@ -24,6 +24,8 @@ class Plan {
         void printStatus();
         const vector<Facility*> &getFacilities() const;
         int getPlanID();
+        string getSelectionPolicy();
+        const vector<Facility*>& getUnderConstuction() const;
         void addFacility(Facility* facility);
         const string toString() const;
         ~Plan();

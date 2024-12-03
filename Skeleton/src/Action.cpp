@@ -1,6 +1,6 @@
 #include "Action.h"
 
-BaseAction::BaseAction(): status(ActionStatus::ERROR), errorMsg("")
+BaseAction::BaseAction():  errorMsg(""),status(ActionStatus::ERROR)
 {
 }
 
@@ -313,7 +313,7 @@ BackupSimulation::BackupSimulation() : BaseAction()
 
 void BackupSimulation::act(Simulation &simulation)
 {
-    simulation.backup();
+    simulation.Backup();
     complete();
 }
 

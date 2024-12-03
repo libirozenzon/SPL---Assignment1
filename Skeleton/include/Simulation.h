@@ -31,7 +31,7 @@ class Simulation {
         Plan &getPlan(const int planID);
         const int getPlanCounter() const; //added function
         vector<BaseAction*>& getActionLog();
-        void backup();
+        void Backup();
         bool restore();
         void step();
         void close();
