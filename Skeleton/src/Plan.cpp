@@ -24,6 +24,7 @@ int Plan:: getPlanID(){
     return plan_id;
 }
 
+
 void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
 {
     if(selectionPolicy!=nullptr){

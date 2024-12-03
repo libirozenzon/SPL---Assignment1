@@ -1,201 +1,254 @@
-// #include "Action.h"
+#include "Action.h"
 
-// ActionStatus BaseAction::getStatus() const
-// {
-//     return status;
-// }
+ActionStatus BaseAction::getStatus() const
+{
+    return status;
+}
 
-// void BaseAction::complete()
-// {
-//     status= ActionStatus::COMPLETED;
-// }
+void BaseAction::complete()
+{
+    status= ActionStatus::COMPLETED;
+}
 
-// void BaseAction::error(string errorMsg)
-// {
+void BaseAction::error(string errorMsg)
+{
+    status= ActionStatus::ERROR;
+    std:: cout<< "an error occured"+ errorMsg; // should i write it like this?
+}
+
+const string &BaseAction::getErrorMsg() const
+{
+    return errorMsg;
+}
+
+SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps)
+{
+}
+
+void SimulateStep::act(Simulation & simulation)
+{
+    for(int i=0; i<numOfSteps;i++){
+        simulation.step();
+    }
+    complete();
+}
+
+const string SimulateStep::toString() const
+{
+    return string(); //TODO
+}
+
+SimulateStep *SimulateStep::clone() const
+{
+    return new SimulateStep(*this);
+}
+
+AddPlan::AddPlan(const string & settlementName, const string & selectionPolicy) : settlementName(settlementName), selectionPolicy(selectionPolicy)
+{
+
+
+}
+
+void AddPlan::act(Simulation &simulation)
+{
+    SelectionPolicy* newPolicy= nullptr;
+    // naive selection policy
+    if(selectionPolicy=="nve"){
+        newPolicy= new NaiveSelection();
+    }
+    // balances selection policy
+    else if(selectionPolicy=="bal"){
+        newPolicy= new BalancedSelection(0,0,0);
+    }
+
+    // economy selection policy
+    else if(selectionPolicy=="eco"){
+        newPolicy= new EconomySelection();
+    }
+
+    // sustainability selection policy
+    else if(selectionPolicy=="env"){
+        newPolicy= new SustainabilitySelection();
+    }
+    //error
+    else{
+        error("cannot create this plan");
+    }
+
+    if(newPolicy!=nullptr){
+        // checking if settlement exists
+        if(simulation.isSettlementExists(settlementName)){
+            Settlement& newSett= simulation.getSettlement(settlementName);
+            simulation.addPlan(newSett,newPolicy);
+            complete();
+        }
+
+        else{
+            error("cannot create this plan");
+        }
+        
+
+    }
     
-// }
+}
 
-// const string &BaseAction::getErrorMsg() const
-// {
-//     // TODO: insert return statement here
-// }
+const string AddPlan::toString() const
+{
+    return string(); //TODO
+}
 
-// SimulateStep::SimulateStep(const int numOfSteps)
-// {
-// }
+AddPlan *AddPlan::clone() const
+{
+    return new AddPlan(*this);
+}
 
-// void SimulateStep::act(Simulation & simulation)
-// {
-// }
+AddSettlement::AddSettlement(const string & settlementName, SettlementType settlementType) :settlementName(settlementName), settlementType(settlementType)
+{
+}
 
-// const string SimulateStep::toString() const
-// {
-//     return string();
-// }
+void AddSettlement::act(Simulation & simulation)
+{
+    if(simulation.isSettlementExists(settlementName)){
+        error("settlemnt already exists");
+    }
+    else{
+        Settlement* newSett= new Settlement(settlementName,settlementType);
+    }
+}
 
-// SimulateStep *SimulateStep::clone() const
-// {
-//     return nullptr;
-// }
+AddSettlement *AddSettlement::clone() const
+{
+    return nullptr;
+}
 
-// AddPlan::AddPlan(const string & settlementName, const string & selectionPolicy)
-// {
-// }
+const string AddSettlement::toString() const
+{
+    return string();
+}
 
-// void AddPlan::act(Simulation &simulation)
-// {
-// }
+// you can start here Rotem
+AddFacility::AddFacility(const string & facilityName, const FacilityCategory facilityCategory, const int price, const int lifeQualityScore, const int economyScore, const int environmentScore)
+{
+}
 
-// const string AddPlan::toString() const
-// {
-//     return string();
-// }
+void AddFacility::act(Simulation &simulation)
+{
+}
 
-// AddPlan *AddPlan::clone() const
-// {
-//     return nullptr;
-// }
+AddFacility *AddFacility::clone() const
+{
+    return nullptr;
+}
 
-// AddSettlement::AddSettlement(const string & settlementName, SettlementType settlementType)
-// {
-// }
+const string AddFacility::toString() const
+{
+    return string();
+}
 
-// void AddSettlement::act(Simulation & simulation)
-// {
-// }
+PrintPlanStatus::PrintPlanStatus(int planId)
+{
+}
 
-// AddSettlement *AddSettlement::clone() const
-// {
-//     return nullptr;
-// }
+void PrintPlanStatus::act(Simulation &simulation)
+{
+}
 
-// const string AddSettlement::toString() const
-// {
-//     return string();
-// }
+PrintPlanStatus * PrintPlanStatus::clone() const
+{
+return nullptr;
+}
 
-// AddFacility::AddFacility(const string & facilityName, const FacilityCategory facilityCategory, const int price, const int lifeQualityScore, const int economyScore, const int environmentScore)
-// {
-// }
+const string PrintPlanStatus::toString() const
+{
+return string();
+}
 
-// void AddFacility::act(Simulation &simulation)
-// {
-// }
+ChangePlanPolicy::ChangePlanPolicy(const int planId, const string &newPolicy)
+{
+}
 
-// AddFacility *AddFacility::clone() const
-// {
-//     return nullptr;
-// }
+void ChangePlanPolicy::act(Simulation &simulation)
+{
+}
 
-// const string AddFacility::toString() const
-// {
-//     return string();
-// }
+ChangePlanPolicy * ChangePlanPolicy::clone() const
+{
+return nullptr;
+}
 
-// PrintPlanStatus::PrintPlanStatus(int planId)
-// {
-// }
+const string ChangePlanPolicy::toString() const
+{
+    return string();
+}
 
-// void PrintPlanStatus::act(Simulation &simulation)
-// {
-// }
+PrintActionsLog::PrintActionsLog()
+{
+}
 
-// PrintPlanStatus * PrintPlanStatus::clone() const
-// {
-// return nullptr;
-// }
+void PrintActionsLog::act(Simulation &simulation)
+{
+}
 
-// const string PrintPlanStatus::toString() const
-// {
-// return string();
-// }
+PrintActionsLog * PrintActionsLog::clone() const
+{
+return nullptr;
+}
 
-// ChangePlanPolicy::ChangePlanPolicy(const int planId, const string &newPolicy)
-// {
-// }
+const string PrintActionsLog::toString() const
+{
+    return string();
+}
 
-// void ChangePlanPolicy::act(Simulation &simulation)
-// {
-// }
+Close::Close()
+{
+}
 
-// ChangePlanPolicy * ChangePlanPolicy::clone() const
-// {
-// return nullptr;
-// }
+void Close::act(Simulation &simulation)
+{
+}
 
-// const string ChangePlanPolicy::toString() const
-// {
-//     return string();
-// }
+Close * Close::clone() const
+{
+return nullptr;
+}
 
-// PrintActionsLog::PrintActionsLog()
-// {
-// }
+const string Close::toString() const
+{
+    return string();
+}
 
-// void PrintActionsLog::act(Simulation &simulation)
-// {
-// }
+BackupSimulation::BackupSimulation()
+{
+}
 
-// PrintActionsLog * PrintActionsLog::clone() const
-// {
-// return nullptr;
-// }
+void BackupSimulation::act(Simulation &simulation)
+{
+}
 
-// const string PrintActionsLog::toString() const
-// {
-//     return string();
-// }
+BackupSimulation *BackupSimulation::clone() const
+{
+    return nullptr;
+}
 
-// Close::Close()
-// {
-// }
+const string BackupSimulation::toString() const
+{
+    return string();
+}
 
-// void Close::act(Simulation &simulation)
-// {
-// }
+RestoreSimulation::RestoreSimulation()
+{
+}
 
-// Close * Close::clone() const
-// {
-// return nullptr;
-// }
+void RestoreSimulation::act(Simulation &simulation)
+{
+}
 
-// const string Close::toString() const
-// {
-//     return string();
-// }
+RestoreSimulation *RestoreSimulation::clone() const
+{
+    return nullptr;
+}
 
-// BackupSimulation::BackupSimulation()
-// {
-// }
-
-// void BackupSimulation::act(Simulation &simulation)
-// {
-// }
-
-// BackupSimulation *BackupSimulation::clone() const
-// {
-//     return nullptr;
-// }
-
-// const string BackupSimulation::toString() const
-// {
-//     return string();
-// }
-
-// RestoreSimulation::RestoreSimulation()
-// {
-// }
-
-// void RestoreSimulation::act(Simulation &simulation)
-// {
-// }
-
-// RestoreSimulation *RestoreSimulation::clone() const
-// {
-//     return nullptr;
-// }
-
-// const string RestoreSimulation::toString() const
-// {
-//     return string();
-// }
+const string RestoreSimulation::toString() const
+{
+    return string();
+}

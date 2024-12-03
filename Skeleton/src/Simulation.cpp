@@ -314,6 +314,7 @@ void Simulation::open()
     isRunning=true;
 }
 
+// destructor
 Simulation::~Simulation() {
     // Delete all settlements (pointers)
     for (Settlement* settlement : settlements) {
@@ -327,7 +328,7 @@ Simulation::~Simulation() {
     }
     actionsLog.clear();
 
-    plans.clear();
+    plans.clear(); // plans has a destructor itself
 
     // Facilities are not dynamically allocated, so no need to delete individual FacilityType objects.
     facilitiesOptions.clear();
