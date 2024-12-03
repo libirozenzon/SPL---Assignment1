@@ -252,7 +252,13 @@ bool Simulation::addSettlement(Settlement *settlement)
 
 bool Simulation::addFacility(FacilityType facility)
 {
+     for(FacilityType currFac: facilitiesOptions) {
+        if ((currFac.getName())==facility.getName()) {
+            return false;
+        }
     facilitiesOptions.push_back(facility);
+    return true;
+    }
 }
 
 bool Simulation::isSettlementExists(const string &settlementName)
@@ -265,7 +271,6 @@ bool Simulation::isSettlementExists(const string &settlementName)
     }
         return false;
 }
-
 
 // need to do try+catch
 
@@ -282,16 +287,10 @@ Settlement &Simulation::getSettlement(const string &settlementName)
     }
 
 
-// need to do try and catch
 
 Plan &Simulation::getPlan(const int planID)
 {
-    if (planID > planCounter || planID<0){
-        throw std::runtime_error("Error: plan ID does not exist" );
-    }
-    else{
         return plans[planID];
-    }
 }
 
 void Simulation::step()
@@ -299,6 +298,11 @@ void Simulation::step()
     for(Plan& curr:plans){
         curr.step();
     }
+}
+
+const int Simulation::getPlanCounter() const
+{
+    return planCounter;
 }
 
 void Simulation::close()

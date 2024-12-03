@@ -110,23 +110,9 @@ const string Plan::toString() const
     std:: stringstream ss;
     ss << "Plan ID: " << plan_id << "\n";
     ss << "Settlement Name: " << settlement.getName() << "\n";
-    if (status==PlanStatus::AVALIABLE) {
-        ss << "Plan Status: AVALIABLE" << "\n";
-    }
-    else {
-        ss << "Plan Status: BUSY" << "\n";
-    }
-    ss << selectionPolicy->toString() << "\n";
     ss << "Life Quality Score: " << life_quality_score << "\n";
     ss << "Economy Score: " << economy_score << "\n";
     ss << "Environment Score: " << environment_score << "\n";
-    for (Facility* fac : underConstruction) {
-        ss << fac->toString() << "\n";
-    }
-     for (Facility* fac : facilities) {
-        ss << fac->toString() << "\n";
-     }
-    return ss.str();
 }
 
 

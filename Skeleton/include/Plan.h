@@ -5,6 +5,7 @@
 #include "SelectionPolicy.h"
 #include <sstream> 
 #include <string> 
+#include <iostream>
 using std::vector;
 
 enum class PlanStatus {
