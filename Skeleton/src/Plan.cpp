@@ -6,6 +6,28 @@ selectionPolicy(selectionPolicy), status(PlanStatus::AVALIABLE) , facilities(), 
 {
 }
 
+Plan::Plan(const int planID, 
+           const Settlement &settlement, 
+           SelectionPolicy *selectionPolicy, 
+           PlanStatus status, 
+           const vector<FacilityType> &facilityOptions, // Still passed by reference
+           int life_quality_score, 
+           int economy_score, 
+           int environment_score)
+    : plan_id(planID),
+      settlement(settlement),
+      selectionPolicy(selectionPolicy),
+      status(status),
+      facilities(), // Move into member variable to avoid another copy
+      underConstruction(), // Move into member variable to avoid another copy
+      facilityOptions(facilityOptions), 
+      life_quality_score(life_quality_score),
+      economy_score(economy_score),
+      environment_score(environment_score) {
+    // Empty constructor body
+}
+
+
 const int Plan::getlifeQualityScore() const
 {
     return life_quality_score;
@@ -24,6 +46,10 @@ int Plan:: getPlanID(){
     return plan_id;
 }
 
+PlanStatus Plan::getStatus()
+{
+    return status;
+}
 
 void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
 {
@@ -37,12 +63,16 @@ string Plan:: getSelectionPolicy(){
     return selectionPolicy->toString();
 }
 
+SelectionPolicy* Plan:: getSelectionPolicyByPtr(){
+    return selectionPolicy;
+}
+
 void Plan::step()
 {
     // remember to delete whats necessary 
-    int constLim= settlement.getConstructLimit();
+    int constLim= settlement.getConstructLimit()-(int)underConstruction.size();
     if(status== PlanStatus::AVALIABLE){
-        while ((int) underConstruction.size() < constLim) {
+       for (int i = 0; i < constLim; i++) {
             Facility* newFacility= new Facility (selectionPolicy->selectFacility(facilityOptions), settlement.getName());
             underConstruction.push_back(newFacility);
         }
@@ -58,15 +88,16 @@ void Plan::step()
     } else {
         ++iter;  // Move to the next facility in the loop
     }
+    }
 
     // change status if necessary
-    if(constLim== (int)underConstruction.size()){
+    if(settlement.getConstructLimit()== (int)underConstruction.size()){
         status= PlanStatus::BUSY;
     }
     else{
         status= PlanStatus::AVALIABLE;
     }
-}
+
 
 
 }
@@ -105,6 +136,10 @@ const vector<Facility*>& Plan::getUnderConstuction() const
   return underConstruction;
 }
 
+const Settlement& Plan:: getSettlement() const{
+    return settlement;
+}
+
 // add facility to facilities+ update values
 void Plan::addFacility(Facility *facility)
 {
@@ -112,6 +147,16 @@ void Plan::addFacility(Facility *facility)
     life_quality_score=life_quality_score+facility->getLifeQualityScore();
     economy_score=economy_score+facility->getEconomyScore();
     environment_score=environment_score+facility->getEnvironmentScore();
+}
+
+void Plan::addToFacilities(Facility *facility)
+{
+    facilities.push_back(facility); 
+}
+
+void Plan::addToUnderConstruction(Facility *facility)
+{
+    underConstruction.push_back(facility); 
 }
 
 const string Plan::toString() const
@@ -152,6 +197,8 @@ Plan::Plan(const Plan& other)
         underConstruction.push_back(new Facility(*facility));
     }
 }
+
+
 
 //destructor
 Plan::~Plan() {

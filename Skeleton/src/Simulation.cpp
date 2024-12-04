@@ -413,12 +413,28 @@ Simulation::Simulation(const Simulation& other)
     }
 
     // Deep copy of plans
-    for (const Plan& plan : other.plans) {
-        plans.push_back(plan);  
-    }
+    // for (const Plan& plan : other.plans) {
+    //     plans.push_back(plan);  
+    // 
+
+
+
 
     for (const FacilityType& facility : other.facilitiesOptions) {
     facilitiesOptions.push_back(facility); // Uses copy constructor
+    }
+
+    for( Plan plan: other.plans){
+        Settlement& newSet= getSettlement(plan.getSettlement().getName());
+        Plan newPlan (plan.getPlanID(),newSet, (plan.getSelectionPolicyByPtr())->clone(),plan.getStatus() ,facilitiesOptions,plan.getlifeQualityScore(),plan.getEconomyScore(),plan.getEnvironmentScore()); 
+        plans.emplace_back(newPlan);
+        for(Facility* facility:plan.getFacilities()){
+            newPlan.addToFacilities(facility->clone());
+        }
+
+        for(Facility* facility:plan.getUnderConstuction()){
+            newPlan.addToUnderConstruction(facility->clone());
+        }
     }
 
 
@@ -456,12 +472,34 @@ Simulation& Simulation::operator=(const Simulation& other) {
          actionsLog.push_back(action->clone());
      }
 
-    for (const Plan& plan : other.plans) {
-        plans.push_back(plan);
-    }
+    // planCounter=0;
+    // for( Plan plan: other.plans){
+    //     Settlement& newSet= getSettlement(plan.getSettlement().getName());
+    //     plans.emplace_back(planCounter,newSet, (plan.getSelectionPolicyByPtr())->clone(),facilitiesOptions);
+    //     planCounter++;
+    // }
+
 
     for (const FacilityType& facility : other.facilitiesOptions) {
      facilitiesOptions.push_back(facility); // Uses copy constructor
+    }
+
+    // Deep copy of plans
+    // for (const Plan& plan : other.plans) {
+    //     plans.push_back(plan); 
+    // } 
+
+    for( Plan plan: other.plans){
+        Settlement& newSet= getSettlement(plan.getSettlement().getName());
+        Plan newPlan (plan.getPlanID(),newSet, (plan.getSelectionPolicyByPtr())->clone(),plan.getStatus() ,facilitiesOptions,plan.getlifeQualityScore(),plan.getEconomyScore(),plan.getEnvironmentScore()); 
+        plans.emplace_back(newPlan);
+        for(Facility* facility:plan.getFacilities()){
+            newPlan.addToFacilities(facility->clone());
+        }
+
+        for(Facility* facility:plan.getUnderConstuction()){
+            newPlan.addToUnderConstruction(facility->clone());
+        }
     }
 
     return *this;
