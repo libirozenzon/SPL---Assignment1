@@ -116,7 +116,7 @@ void Simulation::start()
             Close close = Close();
             close.act(*this);
             isRunning=false;
-            std:: cout<< "simulation is finished";
+            std:: cout<< "simulation is finished\n";
         }
         else{
                 vector<string> parsedAction= Auxiliary::parseArguments(input);
@@ -401,14 +401,14 @@ Simulation::~Simulation() {
 // copy constructor
 
 Simulation::Simulation(const Simulation& other) 
-    : isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(), plans(), settlements(), facilitiesOptions() {
+    : isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(), plans(), settlements(), facilitiesOptions(other.facilitiesOptions) {
     // Deep copy of settlements
-    for (const Settlement* settlement : other.settlements) {
+    for (Settlement* settlement : other.settlements) {
         settlements.push_back(new Settlement(*settlement));
     }
 
     // Deep copy of actions
-    for (const BaseAction* action : other.actionsLog) {
+    for (BaseAction* action : other.actionsLog) {
         actionsLog.push_back(action->clone());  // Assuming BaseAction has a virtual clone method
     }
 
@@ -418,16 +418,10 @@ Simulation::Simulation(const Simulation& other)
     // 
 
 
-
-
-    for (const FacilityType& facility : other.facilitiesOptions) {
-    facilitiesOptions.push_back(facility); // Uses copy constructor
-    }
-
     for( Plan plan: other.plans){
         Settlement& newSet= getSettlement(plan.getSettlement().getName());
-        Plan newPlan (plan.getPlanID(),newSet, (plan.getSelectionPolicyByPtr())->clone(),plan.getStatus() ,facilitiesOptions,plan.getlifeQualityScore(),plan.getEconomyScore(),plan.getEnvironmentScore()); 
-        plans.emplace_back(newPlan);
+        Plan newPlan (plan.getPlanID(),newSet, (plan.getSelectionPolicyByPtr())->clone(),plan.getStatus() 
+        ,facilitiesOptions,plan.getlifeQualityScore(),plan.getEconomyScore(),plan.getEnvironmentScore()); 
         for(Facility* facility:plan.getFacilities()){
             newPlan.addToFacilities(facility->clone());
         }
@@ -435,6 +429,7 @@ Simulation::Simulation(const Simulation& other)
         for(Facility* facility:plan.getUnderConstuction()){
             newPlan.addToUnderConstruction(facility->clone());
         }
+        plans.emplace_back(newPlan);
     }
 
 
@@ -491,8 +486,8 @@ Simulation& Simulation::operator=(const Simulation& other) {
 
     for( Plan plan: other.plans){
         Settlement& newSet= getSettlement(plan.getSettlement().getName());
-        Plan newPlan (plan.getPlanID(),newSet, (plan.getSelectionPolicyByPtr())->clone(),plan.getStatus() ,facilitiesOptions,plan.getlifeQualityScore(),plan.getEconomyScore(),plan.getEnvironmentScore()); 
-        plans.emplace_back(newPlan);
+        Plan newPlan (plan.getPlanID(),newSet, (plan.getSelectionPolicyByPtr())->clone(),plan.getStatus()
+         ,facilitiesOptions,plan.getlifeQualityScore(),plan.getEconomyScore(),plan.getEnvironmentScore()); 
         for(Facility* facility:plan.getFacilities()){
             newPlan.addToFacilities(facility->clone());
         }
@@ -500,6 +495,7 @@ Simulation& Simulation::operator=(const Simulation& other) {
         for(Facility* facility:plan.getUnderConstuction()){
             newPlan.addToUnderConstruction(facility->clone());
         }
+        plans.emplace_back(newPlan);
     }
 
     return *this;

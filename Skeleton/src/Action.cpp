@@ -18,7 +18,7 @@ void BaseAction::error(string errorMsg)
 {
     status= ActionStatus::ERROR;
     this->errorMsg=std::move(errorMsg);
-    std:: cout<< "an error occured:" << this->errorMsg << std::endl;
+    std:: cout<< "an error occured: " << this->errorMsg << "\n" << std::endl;
 }
 
 const string &BaseAction::getErrorMsg() const
@@ -125,7 +125,7 @@ void AddSettlement::act(Simulation & simulation)
         Settlement* newSett= new Settlement(settlementName,settlementType); // need to delete
         bool isExist= simulation.addSettlement(newSett);
         if(isExist){
-            error("settlemnt already exists");
+            error("settlement already exists\n");
         }
         else{
             complete();
@@ -141,7 +141,7 @@ AddSettlement *AddSettlement::clone() const
 
 const string AddSettlement::toString() const
 {
-    return "settlement " + settlementName + std::to_string(static_cast<int>(settlementType)) + actionStatus()+"\n";
+    return "settlement " + settlementName + " " + std::to_string(static_cast<int>(settlementType)) + actionStatus()+"\n";
 }
 
 AddFacility::AddFacility(const string & facilityName, const FacilityCategory facilityCategory, const int price, const int lifeQualityScore, const int economyScore, const int environmentScore):
@@ -270,6 +270,7 @@ void PrintActionsLog::act(Simulation &simulation)
         ss = ss + act->toString();
     }
     std::cout << ss + "\n";
+    complete();
 }
 
 PrintActionsLog * PrintActionsLog::clone() const
@@ -291,7 +292,7 @@ void Close::act(Simulation &simulation)
     std::string ss = "";
     for (int i=0;i<simulation.getPlanCounter();i++) {
         Plan& plan = simulation.getPlan(i);
-        ss = ss + plan.toString();
+        ss = ss + plan.toString() + "\n";
     }
     std::cout << ss;
     complete();

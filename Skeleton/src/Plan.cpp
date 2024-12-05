@@ -18,8 +18,8 @@ Plan::Plan(const int planID,
       settlement(settlement),
       selectionPolicy(selectionPolicy),
       status(status),
-      facilities(), // Move into member variable to avoid another copy
-      underConstruction(), // Move into member variable to avoid another copy
+      facilities(vector<Facility*>()), // Move into member variable to avoid another copy
+      underConstruction(vector<Facility*>()), // Move into member variable to avoid another copy
       facilityOptions(facilityOptions), 
       life_quality_score(life_quality_score),
       economy_score(economy_score),
