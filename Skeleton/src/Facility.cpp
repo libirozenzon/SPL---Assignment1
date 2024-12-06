@@ -81,9 +81,9 @@ FacilityStatus Facility::step()
     return status;
 }
 
-void Facility::setStatus(FacilityStatus status)
+void Facility::setStatus(FacilityStatus status1)
 {
-    this->status=status; //creates copy of the status
+    this->status=status1; 
 }
 
 const FacilityStatus &Facility::getStatus() const

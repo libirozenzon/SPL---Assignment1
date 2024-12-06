@@ -68,24 +68,25 @@ void AddPlan::act(Simulation &simulation)
     SelectionPolicy* newPolicy= nullptr;
     // naive selection policy
     if(selectionPolicy=="nve"){
-        newPolicy= new NaiveSelection(); // need to delete
+        newPolicy= new NaiveSelection(); 
     }
-    // balances selection policy
+    // balanced selection policy
     else if(selectionPolicy=="bal"){
-        newPolicy= new BalancedSelection(0,0,0); // need to delete
+        newPolicy= new BalancedSelection(0,0,0); 
     }
 
     // economy selection policy
     else if(selectionPolicy=="eco"){
-        newPolicy= new EconomySelection(); // need to delete
+        newPolicy= new EconomySelection(); 
     }
 
     // sustainability selection policy
     else if(selectionPolicy=="env"){
-        newPolicy= new SustainabilitySelection(); // need to delete
+        newPolicy= new SustainabilitySelection(); 
     }
     //error
     else{
+
         error("cannot create this plan");
     }
 
@@ -98,6 +99,8 @@ void AddPlan::act(Simulation &simulation)
         }
 
         else{
+            // no use of new policy
+            delete newPolicy;
             error("cannot create this plan");
         }
         
@@ -108,7 +111,7 @@ void AddPlan::act(Simulation &simulation)
 
 const string AddPlan::toString() const
 {
-    return "plan " + settlementName + selectionPolicy + actionStatus() + "\n";
+    return "plan " + settlementName + " " + selectionPolicy + actionStatus() + "\n";
 }
 
 AddPlan *AddPlan::clone() const
@@ -122,9 +125,10 @@ AddSettlement::AddSettlement(const string & settlementName, SettlementType settl
 
 void AddSettlement::act(Simulation & simulation)
 {
-        Settlement* newSett= new Settlement(settlementName,settlementType); // need to delete
+        Settlement* newSett= new Settlement(settlementName,settlementType); 
         bool isExist= simulation.addSettlement(newSett);
         if(isExist){
+            delete newSett;
             error("settlement already exists\n");
         }
         else{
@@ -167,8 +171,8 @@ AddFacility *AddFacility::clone() const
 
 const string AddFacility::toString() const
 {
-    return "facility " + facilityName + std::to_string(static_cast<int>(facilityCategory))
-     + std::to_string(price) + std::to_string(lifeQualityScore) + std::to_string(economyScore)
+    return "facility " + facilityName + " "+ std::to_string(static_cast<int>(facilityCategory))+ " "
+     + std::to_string(price) + " "+ std::to_string(lifeQualityScore) + " "+ std::to_string(economyScore)+ " "
      + std::to_string(environmentScore) + actionStatus() + "\n";
 }
 
@@ -202,7 +206,7 @@ ChangePlanPolicy::ChangePlanPolicy(const int planId, const string &newPolicy): B
 
 void ChangePlanPolicy::act(Simulation &simulation)
 {
-    //check if working also with the special policy 
+    //check if working also with the balanced policy 
     // check if planID exists
     if(!simulation.isPlanExist(planId)){
         error("cannot change selection policy");
@@ -214,7 +218,7 @@ void ChangePlanPolicy::act(Simulation &simulation)
             error("cannot change selection policy");
         }
         else if(newPolicy=="bal"){
-            // taking care of the underconstruction vector
+            // taking care of the underconstruction vector- need to
             int LifeQualityScore=0;
             int EconomyScore=0;
             int EnvironmentScore=0;
@@ -230,11 +234,12 @@ void ChangePlanPolicy::act(Simulation &simulation)
             }
             SelectionPolicy* currPolicy= new BalancedSelection(LifeQualityScore,EconomyScore,EnvironmentScore);
             currPlan.setSelectionPolicy(currPolicy);
+            std:: cout<< "planID: "+ std:: to_string(planId) + "\n" + "previous policy: "+ policy + "\n new policy:"+ newPolicy << std:: endl;
             complete();
         }
     
         else{
-            SelectionPolicy* currPolicy= simulation.readSelectionPolicy(newPolicy); //deal with ptr later
+            SelectionPolicy* currPolicy= simulation.readSelectionPolicy(newPolicy); 
             if(currPolicy==nullptr){
                 error("cannot change selection policy");
             }
@@ -242,6 +247,7 @@ void ChangePlanPolicy::act(Simulation &simulation)
             else{
 
                 currPlan.setSelectionPolicy(currPolicy);
+                std:: cout<< "planID: "+ std:: to_string(planId) + "\n" + "previous policy: "+ policy + "\n new policy:"+ newPolicy << std:: endl;
                 complete();
             }
         }
@@ -256,7 +262,7 @@ return new ChangePlanPolicy(*this);
 
 const string ChangePlanPolicy::toString() const
 {
-    return "ChangePlanPolicy " + std::to_string(planId) + newPolicy + actionStatus() + "\n";
+    return "ChangePlanPolicy " + std::to_string(planId) + " "+ newPolicy + actionStatus() + "\n";
 }
 
 PrintActionsLog::PrintActionsLog() : BaseAction()

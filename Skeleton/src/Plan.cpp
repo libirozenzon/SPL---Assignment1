@@ -10,7 +10,7 @@ Plan::Plan(const int planID,
            const Settlement &settlement, 
            SelectionPolicy *selectionPolicy, 
            PlanStatus status, 
-           const vector<FacilityType> &facilityOptions, // Still passed by reference
+           const vector<FacilityType> &facilityOptions, 
            int life_quality_score, 
            int economy_score, 
            int environment_score)
@@ -18,13 +18,13 @@ Plan::Plan(const int planID,
       settlement(settlement),
       selectionPolicy(selectionPolicy),
       status(status),
-      facilities(vector<Facility*>()), // Move into member variable to avoid another copy
-      underConstruction(vector<Facility*>()), // Move into member variable to avoid another copy
+      facilities(vector<Facility*>()), 
+      underConstruction(vector<Facility*>()), 
       facilityOptions(facilityOptions), 
       life_quality_score(life_quality_score),
       economy_score(economy_score),
       environment_score(environment_score) {
-    // Empty constructor body
+    
 }
 
 
@@ -51,12 +51,12 @@ PlanStatus Plan::getStatus()
     return status;
 }
 
-void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
+void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy1)
 {
     if(selectionPolicy!=nullptr){
         delete this->selectionPolicy;
     }
-    this->selectionPolicy=selectionPolicy; 
+    this->selectionPolicy=selectionPolicy1; 
 }
 
 string Plan:: getSelectionPolicy(){
@@ -82,11 +82,10 @@ void Plan::step()
     FacilityStatus newStat = facility->step();  // Step function on the facility
 
     if (newStat == FacilityStatus::OPERATIONAL) {
-        // If the facility is operational, move it to 'facilities' vector
         addFacility(facility); // Add to 'facilities'
         iter = underConstruction.erase(iter);  // Remove from 'underConstruction'
     } else {
-        ++iter;  // Move to the next facility in the loop
+        ++iter;  
     }
     }
 
@@ -175,12 +174,12 @@ const string Plan::toString() const
 
 Plan::Plan(const Plan& other) 
     : plan_id(other.plan_id),
-      settlement(other.settlement),  // Settlement is assumed to be const & and doesn't require deep copy
-      selectionPolicy(other.selectionPolicy ? other.selectionPolicy->clone() : nullptr),  // Clone the selection policy
+      settlement(other.settlement),  
+      selectionPolicy(other.selectionPolicy ? other.selectionPolicy->clone() : nullptr),  
       status(other.status),
-      facilities(),  // Explicitly initialize the facilities vector
-      underConstruction(),   // Initialize underConstruction here
-      facilityOptions(other.facilityOptions),  // References are shared, assuming facilityOptions doesn't change
+      facilities(),  
+      underConstruction(),   
+      facilityOptions(other.facilityOptions),  
       life_quality_score(other.life_quality_score),
       economy_score(other.economy_score),
       environment_score(other.environment_score)
@@ -202,9 +201,9 @@ Plan::Plan(const Plan& other)
 
 //destructor
 Plan::~Plan() {
-    delete selectionPolicy;  // Clean up selectionPolicy
+    delete selectionPolicy;  
 
-    // Clean up dynamically allocated facilities
+  
     for (Facility* facility : facilities) {
         delete facility;
     }

@@ -24,7 +24,7 @@ const string NaiveSelection::toString() const
 
 NaiveSelection *NaiveSelection::clone() const
 {
-    return new NaiveSelection(*this); // no need for copy constructor
+    return new NaiveSelection(*this); 
 }
 
 BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore)
@@ -64,7 +64,7 @@ return "bal";
 
 BalancedSelection *BalancedSelection::clone() const
 {
- return new BalancedSelection(*this); // no need for copy constructor
+ return new BalancedSelection(*this); 
 }
 
 EconomySelection::EconomySelection() :lastSelectedIndex(-1)
@@ -73,7 +73,7 @@ EconomySelection::EconomySelection() :lastSelectedIndex(-1)
 
 const FacilityType & EconomySelection::selectFacility(const vector<FacilityType>& facilitiesOptions)
 {   
-    // assumig there's a facilioty that its category is ECONOMY
+    // assuming there's a facility that its category is ECONOMY
     bool isEconomy= false;
     int size= facilitiesOptions.size();
     int last;
@@ -95,7 +95,7 @@ const string EconomySelection::toString() const
 
 EconomySelection *EconomySelection::clone() const
 {
-    return new EconomySelection(*this); // no need for copy constructor
+    return new EconomySelection(*this); 
 }
 
 SustainabilitySelection::SustainabilitySelection():lastSelectedIndex(-1)
@@ -104,7 +104,7 @@ SustainabilitySelection::SustainabilitySelection():lastSelectedIndex(-1)
 
 const FacilityType &SustainabilitySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
-    // assumig there's a facilioty that its category is ENVIRONMENT
+    // assuming there's a facility that its category is ENVIRONMENT
     bool isEnv= false;
     int size= facilitiesOptions.size();
     int last;
@@ -125,5 +125,5 @@ const string SustainabilitySelection::toString() const
 
 SustainabilitySelection * SustainabilitySelection::clone() const
 {
-    return new SustainabilitySelection(*this); // no need for copy constructor
+    return new SustainabilitySelection(*this); 
 }

@@ -13,17 +13,17 @@ Simulation::Simulation(const string &configFilePath) : isRunning(false), planCou
     }
     std::string line;
     while (std::getline(file, line)) {
-        // Skip empty lines or lines starting with comments
+        // skip empty lines or lines starting with comments
         if (line.empty() || line[0] == '#') {
             continue;
         }
 
-        // Parse the line into arguments
+        // parse the line into arguments
         std::vector<std::string> arguments = Auxiliary::parseArguments(line);
 
-        // Process each line based on its first word
+        // process each line based on its first word
         if (arguments[0] == "settlement") {
-            // Format: settlement <settlement_name> <settlement_type>
+            // format: settlement <settlement_name> <settlement_type>
             // make sure its 3 arguments
             if (arguments.size() != 3) {
                 std::cerr << "Error: Invalid settlement line: " << line << std::endl;
@@ -33,11 +33,10 @@ Simulation::Simulation(const string &configFilePath) : isRunning(false), planCou
             string settlementName = arguments[1];
             SettlementType type = static_cast<SettlementType>(std::stoi(arguments[2]));
 
-            // Create and add the settlement with class function
             addSettlement(new Settlement(settlementName, type));
         }
         else if (arguments[0] == "facility") {
-            // Format: facility <facility_name> <category> <price> <lifeq_impact> <eco_impact> <env_impact>
+            // format: facility <facility_name> <category> <price> <lifeq_impact> <eco_impact> <env_impact>
             if (arguments.size() != 7) {
                 std::cerr << "Error: Invalid facility line: " << line << std::endl;
                 continue;
@@ -50,11 +49,10 @@ Simulation::Simulation(const string &configFilePath) : isRunning(false), planCou
             int ecoImpact = std::stoi(arguments[5]);
             int envImpact = std::stoi(arguments[6]);
 
-            // Create and add the facilityTypes to facilitiesOptions
-            addFacility(FacilityType(facilityName, category, price, lifeqImpact, ecoImpact, envImpact)); // should i add new?
+            addFacility(FacilityType(facilityName, category, price, lifeqImpact, ecoImpact, envImpact)); 
         }
         else if (arguments[0] == "plan") {
-            // Format: plan <settlement_name> <selection_policy>
+            // format: plan <settlement_name> <selection_policy>
             if (arguments.size() != 3) {
                 std::cerr << "Error: Invalid plan line: " << line << std::endl;
                 continue;
@@ -63,21 +61,19 @@ Simulation::Simulation(const string &configFilePath) : isRunning(false), planCou
             string settlementName = arguments[1];
             string selectionPolicy = arguments[2];
 
-            // Check if the settlement exists
+            // check if the settlement exists
             if (!isSettlementExists(settlementName)) {
                 std::cerr << "Error: Settlement " << settlementName << " settlement does not exist." << std::endl;
                 continue;
             }
 
-            // Retrieve the settlement
             Settlement &settlement = getSettlement(settlementName);
 
-            SelectionPolicy* policy = readSelectionPolicy(selectionPolicy);  // You'll need to implement this function
+            SelectionPolicy* policy = readSelectionPolicy(selectionPolicy);  
             if(policy==nullptr){
                 std::cerr << "Error: selectionPolicy  " << selectionPolicy << " does not exist." << std::endl;
             }
 
-            // Add the plan
             addPlan(settlement, policy);
         }
         else {
@@ -85,7 +81,7 @@ Simulation::Simulation(const string &configFilePath) : isRunning(false), planCou
         }
     }
 
-    // Close the file after reading
+    // close the file after reading
     file.close();
 
 }
@@ -100,7 +96,7 @@ SelectionPolicy* Simulation::readSelectionPolicy(const string& policyType) {
     } else if (policyType == "env") {
         return new SustainabilitySelection();
     } else {
-        return nullptr; // Invalid policy type
+        return nullptr; // invalid policy type
     }
 }
 
@@ -116,7 +112,7 @@ void Simulation::start()
             Close close = Close();
             close.act(*this);
             isRunning=false;
-            std:: cout<< "simulation is finished\n";
+            std:: cout<< "Simulation is finished\n";
         }
         else{
                 vector<string> parsedAction= Auxiliary::parseArguments(input);
@@ -139,7 +135,6 @@ void Simulation:: TranslatingActions(const vector<string> &parsedAction){
     // plan
     if(parsedAction[0]== "plan"){
         AddPlan newPlan= AddPlan(parsedAction[1],parsedAction[2]);
-        // in act- make sure there are no errors and print "cannot create this plan"
         newPlan.act(*this);
         BaseAction* saveToLog= newPlan.clone();
         actionsLog.push_back(saveToLog);
@@ -156,10 +151,10 @@ void Simulation:: TranslatingActions(const vector<string> &parsedAction){
         else if(numOftype==1){
             type= SettlementType::CITY;
         }
-        else {
+        else  {
             type= SettlementType:: METROPOLIS;
         }
-        // what if not 0/1/2- not handling it
+        // assuming input is valid
 
         AddSettlement newSet= AddSettlement(parsedAction[1],type);
         newSet.act(*this);
@@ -181,7 +176,7 @@ void Simulation:: TranslatingActions(const vector<string> &parsedAction){
         else {
             type= FacilityCategory::ENVIRONMENT;
         }
-        // what if not 0/1/2- not handling it
+        // assuming input is valid
 
         AddFacility newFac= AddFacility(parsedAction[1],type,std::stoi(parsedAction[3]),std::stoi(parsedAction[4]),std::stoi(parsedAction[5]),std::stoi(parsedAction[6]));
         newFac.act(*this);
@@ -308,7 +303,6 @@ bool Simulation:: isPlanExist(const int planID){
 }
 
 
-// need to do try+catch
 
 Settlement &Simulation::getSettlement(const string &settlementName)
 {
@@ -402,20 +396,15 @@ Simulation::~Simulation() {
 
 Simulation::Simulation(const Simulation& other) 
     : isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(), plans(), settlements(), facilitiesOptions(other.facilitiesOptions) {
-    // Deep copy of settlements
+    // deep copy of settlements
     for (Settlement* settlement : other.settlements) {
         settlements.push_back(new Settlement(*settlement));
     }
 
-    // Deep copy of actions
+    // deep copy of actions
     for (BaseAction* action : other.actionsLog) {
-        actionsLog.push_back(action->clone());  // Assuming BaseAction has a virtual clone method
+        actionsLog.push_back(action->clone());  
     }
-
-    // Deep copy of plans
-    // for (const Plan& plan : other.plans) {
-    //     plans.push_back(plan);  
-    // 
 
 
     for( Plan plan: other.plans){
@@ -439,10 +428,10 @@ Simulation::Simulation(const Simulation& other)
 
 Simulation& Simulation::operator=(const Simulation& other) {
     if (this == &other) {
-        return *this;  // Self-assignment protection
+        return *this;  
     }
 
-    // Clean up current resources
+    // clean current resources
     for (Settlement* settlement : settlements) {
         delete settlement;
     }
@@ -455,7 +444,6 @@ Simulation& Simulation::operator=(const Simulation& other) {
 
     plans.clear();
 
-    // Deep copy from other
     isRunning = other.isRunning;
     planCounter = other.planCounter;
 
@@ -467,22 +455,12 @@ Simulation& Simulation::operator=(const Simulation& other) {
          actionsLog.push_back(action->clone());
      }
 
-    // planCounter=0;
-    // for( Plan plan: other.plans){
-    //     Settlement& newSet= getSettlement(plan.getSettlement().getName());
-    //     plans.emplace_back(planCounter,newSet, (plan.getSelectionPolicyByPtr())->clone(),facilitiesOptions);
-    //     planCounter++;
-    // }
 
 
     for (const FacilityType& facility : other.facilitiesOptions) {
      facilitiesOptions.push_back(facility); // Uses copy constructor
     }
 
-    // Deep copy of plans
-    // for (const Plan& plan : other.plans) {
-    //     plans.push_back(plan); 
-    // } 
 
     for( Plan plan: other.plans){
         Settlement& newSet= getSettlement(plan.getSettlement().getName());
@@ -518,7 +496,7 @@ Simulation::Simulation(Simulation&& other)
 
 Simulation& Simulation::operator=(Simulation&& other)  {
     if (this == &other) {
-        return *this;  // Self-assignment protection
+        return *this;  
     }
 
     // Clean up current resources

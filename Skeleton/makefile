@@ -1,5 +1,5 @@
 # Build and Run Project
-all: clean compile link run
+all: clean compile link 
 
 # Linking step
 link:
@@ -20,10 +20,3 @@ compile:
 clean:
 	rm -f bin/*
 
-# Run the compiled program
-run:
-	./bin/simulation config_file.txt
-
-# Run the program with Valgrind
-valgrind: clean compile link
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./bin/simulation config_file.txt

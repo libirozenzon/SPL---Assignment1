@@ -24,7 +24,7 @@ int Settlement::getConstructLimit() const {
     return static_cast<int>(type) + 1;
 }
 
-// Function definition for converting enum to string
+// converting enum to string
 string Settlement::typeToString(SettlementType type) {
     switch (type) {
     case SettlementType::VILLAGE:
